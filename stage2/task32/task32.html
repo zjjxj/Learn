@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>task32</title>
+    <style>
+        fieldset{
+            width: 30%;
+            margin-bottom: 30px;
+        }
+        #result{
+            position: absolute;
+            width:60%;
+            top:0px;
+            right: 0px;
+            text-align: center;
+            border: 1px solid black;
+        }
+        #options{
+            display: none;
+        }
+        #tagArea div{
+            display: inline-block;
+            margin-left: 10px;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            text-align: center;
+            line-height: 50px;
+        }
+    </style>
+
+</head>
+<body>
+    <fieldset id="chartType">
+        <legend>表单类型</legend>
+        <input type="radio" name="chart" id="text" checked>输入框
+        <input type="radio" name="chart" id="radio">单选框
+        <input type="radio" name="chart" id="checkbox">多选框
+        <input type="radio" name="chart" id="select">下拉框
+    </fieldset>
+    <fieldset id="theName">
+        <legend>名称</legend>
+        <input type="text" id="title"><br/>
+        <input type="radio" name="must" id="notMust">选填
+        <input type="radio" name="must" id="must">必填
+    </fieldset>
+    <fieldset id="contentType">
+        <legend>内容类型</legend>
+        <input type="radio" name="content" id="user">用户名
+        <input type="radio" name="content" id="password">密码
+        <input type="radio" name="content" id="tel">手机号
+        <input type="radio" name="content" id="email">邮箱
+    </fieldset>
+    <fieldset id="options">
+        <legend>选项</legend>
+        <textarea id="inputTag" rows="5" cols="20" placeholder="请输入字符并用不同分隔符分隔"></textarea>
+        <div id="tagArea"></div>
+    </fieldset>
+    <button>生成</button>
+    <div id="result">
+        <h1>展示区</h1>
+    </div>
+    <script>
+        $=function (el) {
+            return document.querySelector(el);
+        };
+        function addEvent(elem,event,listener) {
+            if(elem.addEventListener){
+                elem.addEventListener(event,listener,false);
+            }else if(elem.attachEvent){
+                elem.attachEvent("on"+event,listener);
+            }else{
+                elem["on"+event]=listener;
+            }
+        }
+        ( function () {
+            var contentTag=$("#tagArea");
+            var renderDataTag=[];
+            var queue={
+                updateData:function (str,renderData) {
+                    var pattern=/[\da-zA-Z\u4e00-\u9fa5]+/g;
+                    var data=str.match(pattern);
+                    data.map(function (dat) {
+                        renderData.push(dat);
+                    })
+                },
+                cutSame:function (renderData) {     //数组去重，返回新数组
+                    var obj={};
+                    var arr=[];
+                    renderData.map(function (data) {
+                        if(!obj[data]){
+                            obj[data]=1;
+                            arr.push(data);
+                        }
+                    })
+                    return arr;
+                },
+                limitNum:function (arr) {         //限制数组队列长度为10
+                    var overNum=arr.length-10;
+                    if(overNum>0){
+                        for(var i=0;i<overNum;i++){
+                            arr.shift();
+                        }
+                    }
+                    return arr;
+                },
+                render:function (arr,ele) {       //渲染
+                    var str="";
+                    arr.map(function (data) {
+                        str+="<div>"+data+"</div>"
+                    });
+                    ele.innerHTML = str;
+                }
+            };
+
+            //为tagInput绑定keyUp事件
+            addEvent($("#inputTag"),"keyup",function (e) {
+                if(e.keyCode===13||e.keyCode===32||e.keyCode===188) {
+                    var newValue;
+                    e.keyCode===188?newValue=this.value.slice(0,this.value.length-1).trim():newValue=this.value.trim();
+                    renderDataTag.push(newValue);
+                    var renderArr=queue.cutSame(renderDataTag);
+                    queue.render(renderArr,contentTag);
+                    $("#inputTag").value="";
+                }
+            })
+        })();
+
+        $("#chartType").onchange=function () {
+            Array.prototype.map.call(document.getElementsByName("chart"),function (data) {
+                if(data.checked==true){
+                    var type=data.getAttribute("id");
+                    if(type=="text"){
+                        $("#options").style.display="none";
+                        $("#contentType").style.display="block";
+                    }else{
+                        $("#options").style.display="block";
+                        $("#contentType").style.display="none";
+
+                    }
+                }
+            })
+        };
+        var verify={
+            user:{rules:"必填，长度为4-16个字符",success:"用户名格式正确",fail:"用户名格式错误",empty:"用户名不得为空",verification:/[0-9a-zA-Z]{4,16}/},
+            password:{rules:"密码为6-12位数字",success:"密码格式正确",fail:"密码格式错误",empty:"秘密不得为空",verification:/[0-9]{6,12}/},
+            tel:{rules:"请输入11位手机号",success:"手机号格式正确",fail:"手机号格式是错误",empty:"手机号不得为空",verification:/[0-9]{11}/},
+            email:{rules:"请输入邮箱",success:"邮箱格式正确",fail:"邮箱格式错误",empty:"邮箱不得为空",verification:/[0-9a-zA-Z]+@[0-9a-z]{2,3}.com/}
+
+        };
+
+        function createForm(name,must,type,content,option) {   //type为表单类型 content为内容类型
+            this.name=name;
+            this.must=must;
+            this.type=type;
+            this.content=content;
+            this.option=option;
+
+        };
+        createForm.prototype={
+            created:function () {
+                var newForm=document.createElement("form");
+                var newLabel=document.createElement("label");
+                newLabel.innerHTML=this.name;
+                newForm.appendChild(newLabel);
+                var newDiv=document.createElement("div");
+                if(!this.option){
+                    var newChart=document.createElement("input");
+                    newChart.setAttribute("type",this.type);
+                    newForm.appendChild(newChart);
+                    this.addEvent(newChart,newDiv);
+                }else{
+                    var options=$("#tagArea").getElementsByTagName("div");
+                        if(this.type=="radio"){
+                            Array.prototype.map.call(options,function (data) {
+                                newForm.innerHTML+="<input type='radio' name='radios'>"+data.innerHTML;
+                            })
+                        }else if(this.type=="checkbox"){
+                            Array.prototype.map.call(options,function (data) {
+                                newForm.innerHTML+="<input type='checkbox' name='checkboxs'>"+data.innerHTML;
+                            })
+                        }else{
+                            var newForm=document.createElement("select");
+                            Array.prototype.map.call(options,function (data) {
+                                newForm.innerHTML+="<option>"+data.innerHTML+"</option>";
+                            })
+                        }
+                    this.addEvent2(newForm,newDiv,this.type)
+                }
+                newForm.appendChild(newDiv);
+                $("#result").appendChild(newForm);
+            },
+            addEvent:function (elem,remind) {
+                var that=this;
+                elem.onfocus=function () {
+                    remind.innerHTML=verify[that.content].rules;
+                    remind.style.color="";
+                    elem.style.borderColor="";
+                    elem.onblur=function () {
+                       if(elem.value!==""){
+                            if((verify[that.content].verification).test(elem.value)){
+                                remind.innerHTML=verify[that.content].success;
+                                remind.style.color="green";
+                                elem.style.borderColor="green"
+                            }else {
+                                remind.innerHTML=verify[that.content].fail;
+                                remind.style.color="red";
+                                elem.style.borderColor="red"
+                            }
+                       }else{
+                           if(that.must=="must"){
+                               remind.innerHTML=verify[that.content].empty;
+                               remind.style.color="red";
+                               elem.style.borderColor="red"
+                           }
+                       }
+                    }
+                };
+            },
+            addEvent2:function (elem,reminds,type) {
+                elem.onchange=function () {
+                    if(type!=="select"){
+                        reminds.innerHTML="请选择";
+                        reminds.style.color="red";
+                        for(var i=1;i<elem.children.length-1;i++){
+                            console.log(elem.children[i].checked)
+                            if(elem.children[i].checked==true){
+                                reminds.innerHTML="已选择";
+                                reminds.style.color="green";
+                            }
+                        }
+                        elem.onblur=function () {
+                            for(var i=1;i<elem.children.length;i++){
+                                if(elem.children[i].checked==true){
+                                    reminds.innerHTML="已选择";
+                                    reminds.style.color="green";
+                                }else{
+                                    reminds.innerHTML="请选择";
+                                    reminds.style.color="red";
+                                }
+                            }
+                        }
+                    }else{
+                        for(var i=0;i<elem.children.length;i++){
+                            if(elem.children[i].select==true){
+                                reminds.innerHTML="已选择";
+                                reminds.style.color="green";
+                            }else{
+                                reminds.innerHTML="请选择";
+                                reminds.style.color="red";
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        $("button").onclick= function() {
+            var newFormType=0,newContent=0,newMust=0;
+            Array.prototype.map.call(document.getElementsByName("must"),function (data) {
+                if(data.checked===true){
+                    newMust=data.getAttribute("id");
+                }
+            });
+            Array.prototype.map.call(document.getElementsByName("chart"),function (data) {
+                if(data.checked===true){
+                    newFormType=data.getAttribute("id");
+                }
+            });
+            Array.prototype.map.call(document.getElementsByName("content"),function (data) {
+                if(data.checked===true){
+                    newContent=data.getAttribute("id");
+                }
+            });
+            var optionsContent=$("#options").lastElementChild.innerHTML;
+            var newElem=new createForm($("#title").value,newMust,newFormType,newContent,optionsContent);
+                newElem.created();
+        }
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+#universe{
+    width: 600px;
+    height: 600px;
+    background-color: black;
+
+    position: relative;
+}
+#star{
+    width: 100px;
+    height: 100px;
+    background-color: dodgerblue;
+    border-radius: 100px;
+    position: absolute;
+    top:250px;
+    left: 250px;
+}
+.airship{
+    width: 70px;
+    height: 20px;
+    background-color: gold;
+    border-radius: 8px;
+    position:absolute;
+}
+#commend{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    border: 1px solid black;
+}
+button{
+    margin: 0 20px;
+}
+#commend div{
+    margin-bottom: 10px;
+}
+#road1{
+    width: 220px;
+    height: 220px;
+    border-radius: 220px;
+    border: 1px solid white;
+    position: absolute;
+    left: 190px;
+    top: 190px;
+}
+#road2{
+    width: 320px;
+    height: 320px;
+    border-radius: 320px;
+    border: 1px solid white;
+    position: absolute;
+    left: 140px;
+    top: 140px;
+}
+#road3{
+    width: 420px;
+    height: 420px;
+    border-radius: 420px;
+    border: 1px solid white;
+    position: absolute;
+    left: 90px;
+    top: 90px;
+}
+#road4{
+    width: 520px;
+    height: 520px;
+    border-radius: 520px;
+    border: 1px solid white;
+    position: absolute;
+    left: 40px;
+    top: 40px;
+}

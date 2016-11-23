@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .root {
+            display: flex;
+            padding: 20px;
+            width: 1000px;
+            height: 300px;
+            border: 1px solid #000;
+            margin: 100px auto;
+            margin-bottom: 10px;
+            justify-content: space-between;
+            z-index: 9;
+
+        }
+
+        .child_1 {
+            display: flex;
+            padding: 20px;
+            width: 300px;
+            height: 260px;
+            border: 1px solid red;
+            justify-content: space-between;
+            z-index: 8;
+            background-color: #ffffff;
+        }
+
+        .child_2 {
+            display: flex;
+            padding: 20px;
+            width: 90px;
+            height: 220px;
+            border: 1px solid green;
+            justify-content: space-between;
+            z-index: 7;
+            background-color: #ffffff;
+        }
+
+        .child_3 {
+            display: flex;
+            padding: 10px;
+            width: 40px;
+            height: 180px;
+            border: 1px solid blue;
+            justify-content: space-between;
+            z-index: 6;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="root">
+    1
+    <div class="child_1">
+        4
+        <div class="child_2">
+            3
+            <div class="child_3">4</div>
+        </div>
+        <div class="child_2">
+            5
+            <div class="child_3">4</div>
+            <div class="child_3">7</div>
+        </div>
+    </div>
+    <div class="child_1">
+        8
+        <div class="child_2">
+            9
+            <div class="child_3">10</div>
+            <div class="child_3">11</div>
+        </div>
+        <div class="child_2">
+            12
+            <div class="child_3">13</div>
+        </div>
+    </div>
+    <div class="child_1">
+        14
+        <div class="child_2">
+            15
+            <div class="child_3">16</div>
+        </div>
+        <div class="child_2">
+            17
+            <div class="child_3">18</div>
+            <div class="child_3">19</div>
+        </div>
+    </div>
+</div>
+<button>深度优先遍历</button>
+<input type="text">
+<button id="search">查询</button>
+<script>
+    (function () {
+        var nodeArray = [];
+        var $ = function (el) {
+            return document.querySelector(el);
+        }
+
+        function traverseDF(node) {
+            if (node) {
+                nodeArray.push(node);
+                for (var i = 0; i < node.children.length; i++) {
+                    traverseDF(node.children[i])
+                }
+            }
+        }
+
+        function changeColor(Array) {
+            var i = 0;
+            var timer = setInterval(function () {
+                if (i == Array.length) {
+                    Array[Array.length - 1].style.backgroundColor = "#fff";
+                    clearInterval(timer);
+                } else if (i == 0) {
+                    Array[i].style.backgroundColor = "blue";
+                } else {
+                    Array[i - 1].style.backgroundColor = "#fff";
+                    Array[i].style.backgroundColor = "blue";
+                }
+                i++;
+            }, 500)
+        }
+
+        $("button").onclick = function () {
+            traverseDF($(".root"));
+            changeColor(nodeArray);
+            nodeArray = [];
+        };
+        $("#search").onclick = function () {
+            traverseDF($(".root"));
+            var arr1 = nodeArray;
+            var arr = [];
+            nodeArray.forEach(function (data, index) {
+                if (data.childNodes[0].nodeValue.trim() == $("input").value) {
+                    arr = nodeArray.slice(0, index + 1);
+                    nodeArray = [];
+                }
+            });
+            if (arr.length > 0) {
+                changeColor(arr);
+            } else {
+                changeColor(arr1);
+//                   alert("Not Find!");
+            }
+
+        }
+    })()
+
+</script>
+</body>
+</html>

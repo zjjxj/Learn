@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #content div{
+            display: inline-block;
+            margin-right: 3px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text">
+    <button id="leftInput">左侧入</button>
+    <button id="rightInput">右侧入</button>
+    <button id="leftOut">左侧出</button>
+    <button id="rightOut">右侧出</button>
+    <button id="sort">排序</button>
+    <div id="content">
+    </div>
+    <script>
+        var charData=[];
+        var input=document.querySelector("input");
+        var content=document.querySelector("#content");
+        function addEvent(elem,event,Listener){
+            if(elem.addEventListener){
+                elem.addEventListener(event,Listener,false);
+            }else if(elem.attachEvent){
+                elem.attachEvent("on"+event,Listener);
+            }else{
+                elem["on"+event]=Listener;
+            }
+        };
+        (function () {
+            var btn=document.querySelectorAll("button");
+            var lin=btn[0];
+            var rin=btn[1];
+            var lout=btn[2];
+            var rout=btn[3];
+            var sort=btn[4];
+            addEvent(lin,"click",leftIn);
+            addEvent(rin,"click",rightIn);
+            addEvent(lout,"click",leftOut);
+            addEvent(rout,"click",rightOut);
+            addEvent(sort,"click",bubble);
+        })();
+        function verify(num) {
+            if(num>100||num<10){
+                alert("请输入10-100的数字！");
+                return false;
+            }
+            if(content.children.length>60){
+                alert("队列已满！")
+                return false;
+            }
+            return true;
+        };
+        function rightIn(){
+            if(verify(input.value)){
+                charData.push(input.value);
+                render();
+            }
+        };
+        function leftIn(){
+            if(verify(input.value)){
+                charData.unshift(input.value);
+                render();
+            }
+
+        };
+        function leftOut(){
+            charData.shift();
+            render();
+        };
+        function rightOut(){
+            charData.pop();
+            render();
+        };
+        function render(){
+            var str="";
+            charData.map(function (data) {
+                str+="<div style='width:20px;height:"+data*3+"px;"+"background-color:red'"+"></div>";
+            });
+            content.innerHTML=str;
+        };
+        function bubble() {
+            var eles = content.children, len  = eles.length, i, j = 0, delay = 500, timer;
+
+            i = len - 1;
+            timer = setInterval(function() {
+                if(i < 1) {
+                    clearInterval(timer);
+                }
+                if(j == i) {
+                    i--;
+                    j = 0;
+                }
+                if (eles[j].offsetHeight > eles[j+1].offsetHeight) {
+                    swap(eles[j], eles[j+1]);
+                }
+                j++;
+            }, delay);
+        }
+        function swap(ele1, ele2) {
+            var temp = ele1.offsetHeight;
+            ele1.offsetHeight = ele2.offsetHeight;
+            ele1.style.height = ele2.offsetHeight + "px";
+            ele2.offsetHeight = temp;
+            ele2.style.height = temp + "px";
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>task34</title>
+    <!--<script src="../../jquery/jquery-3.1.0.min.js"></script>-->
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        #rowNumber span{
+            display: inline-block;
+            width: 51px;
+            height: 51px;
+            text-align: center;
+            line-height: 51px;
+            margin-left: -3px;
+        }
+        #colNumber span{
+            display: block;
+            width: 51px;
+            height: 51px;
+            text-align: center;
+            line-height: 51px;
+            margin-top: -1px;
+        }
+        #colNumber{
+            width:50px;
+        }
+        #map{
+            margin-top: -500px;
+            margin-left: 50px;
+            border: 1px solid black;
+            width: 520px;
+
+        }
+        #map div{
+            height: 51px;
+            width: 520px;
+        }
+        #map span{
+            margin: 0px;
+            padding: 0px;
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 1px solid gainsboro;
+            transition: background-Color 1s linear,transform 1s linear;
+
+        }
+        form{
+            margin-left: 100px;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="checkerBoard">
+    <div id="rowNumber">
+        <span></span>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+        <span>6</span>
+        <span>7</span>
+        <span>8</span>
+        <span>9</span>
+        <span>10</span>
+    </div>
+    <div id="colNumber">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+        <span>6</span>
+        <span>7</span>
+        <span>8</span>
+        <span>9</span>
+        <span>10</span>
+    </div>
+    <div id="map">
+
+    </div>
+</div>
+<form>
+    <input type="text">
+    <button>执行</button>
+</form>
+<script src="task34.js"></script>
+</body>
+</html>

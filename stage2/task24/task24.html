@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .root {
+            display: flex;
+            padding: 20px;
+            width: 1000px;
+            height: 300px;
+            border: 1px solid #000;
+            margin: 100px auto;
+            margin-bottom: 10px;
+            justify-content: space-between;
+            z-index: 9;
+
+        }
+
+        .child_1 {
+            display: flex;
+            padding: 20px;
+            width: 300px;
+            height: 260px;
+            border: 1px solid red;
+            justify-content: space-between;
+            z-index: 8;
+            background-color: #ffffff;
+        }
+
+        .child_2 {
+            display: flex;
+            padding: 20px;
+            width: 90px;
+            height: 220px;
+            border: 1px solid green;
+            justify-content: space-between;
+            z-index: 7;
+            background-color: #ffffff;
+        }
+
+        .child_3 {
+            display: flex;
+            padding: 10px;
+            width: 40px;
+            height: 180px;
+            border: 1px solid blue;
+            justify-content: space-between;
+            z-index: 6;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="root">
+        1
+        <div class="child_1">
+            4
+            <div class="child_2">
+                3
+                <div class="child_3">4</div>
+            </div>
+            <div class="child_2">
+                5
+                <div class="child_3">4</div>
+                <div class="child_3">7</div>
+            </div>
+        </div>
+        <div class="child_1">
+            8
+            <div class="child_2">
+                9
+                <div class="child_3">10</div>
+                <div class="child_3">11</div>
+            </div>
+            <div class="child_2">
+                12
+                <div class="child_3">13</div>
+            </div>
+        </div>
+        <div class="child_1">
+            14
+            <div class="child_2">
+                15
+                <div class="child_3">16</div>
+            </div>
+            <div class="child_2">
+                17
+                <div class="child_3">18</div>
+                <div class="child_3">19</div>
+            </div>
+        </div>
+    </div>
+    <input type="text">
+    <button id="add">添加</button>
+    <button id="delete">删除</button>
+    <script>
+        var nodeArray=[];
+        var btn=document.querySelectorAll("button");
+
+        function traverseDF(node) {
+            if(node){
+                nodeArray.push(node);
+                for(var i=0;i<node.children.length;i++){
+                    traverseDF(node.children[i]);
+                }
+            }
+        }
+
+        (document.querySelector(".root")).onclick=function (e) {
+            traverseDF(document.querySelector(".root"));
+            nodeArray.map(function (node) {
+                    if(node==e.target){
+                        node.style.backgroundColor="yellow";
+                        btn[1].onclick=function () {
+                            var parent=node.parentNode;
+                            parent.removeChild(node);
+                        }
+                        btn[0].onclick=function () {
+                            var input=document.querySelector("input").value;
+                            var oldHtml=node.innerHTML;
+                            node.innerHTML=oldHtml+"<div style='margin: 5px;border: solid black 1px'>"+input+"</div>";
+                        }
+                    }else{
+                        node.style.backgroundColor="#fff";
+                    }
+                })
+            }
+        traverseDF(document.querySelector(".root"))
+    </script>
+</body>
+</html>

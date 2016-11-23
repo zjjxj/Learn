@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #content div{
+            background-color: red;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text">
+    <button id="leftInput">左侧入</button>
+    <button id="rightInput">右侧入</button>
+    <button id="leftOut">左侧出</button>
+    <button id="rightOut">右侧出</button>
+    <div id="content">
+    </div>
+    <script>
+        //事件绑定函数，兼容浏览器差异
+        function addEvent(elem,event,listener) {
+            if(elem.addEventListener){
+                elem.addEventListener(event,listener,false);
+            }else if(elem.attachEvent){
+                elem.attachEvent("on"+event,listener);
+            }else{
+                elem["on"+event]=listener;
+            }
+        }
+        var input=document.querySelector("input");
+        var buttons=document.querySelectorAll("button");
+        var content=document.querySelector("#content");
+        var queue={
+            arr:[],
+
+            rightIn:function(num){
+                this.arr.push(num);
+                this.render();
+            },
+            leftIn:function (num) {
+                this.arr.unshift(num);
+                this.render();
+            },
+            rightOut:function () {
+                alert(this.arr.pop());
+                this.render();
+            },
+            leftOut:function () {
+                alert(this.arr.shift());
+                this.render();
+            },
+            render:function () {
+                var str="";
+                this.arr.map(function (data) {
+                    str+="<div>"+data+"</div>"
+                });
+                content.innerHTML = str;
+            }
+        };
+       // 给四个按钮绑定事件
+        addEvent(document,"click",function (e) {
+            switch (e.target.id){
+                case "leftInput":
+                    queue.leftIn(input.value);
+                    break;
+                case "rightInput":
+                    queue.rightIn(input.value);
+                    break;
+                case "leftOut":
+                    queue.leftOut();
+                    break;
+                case "rightOut":
+                    queue.rightOut();
+                    break;
+            }
+        });
+        //点击队列中任何一个元素，则该元素会被从队列中删除
+                addEvent(content,"click",function (e) {
+                    content.removeChild(e.target);
+                })
+    </script>
+</body>
+</html>

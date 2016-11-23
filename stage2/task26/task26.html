@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../../jquery/jquery-3.1.0.min.js"></script>
+    <link rel="stylesheet" href="task26.css"/>
+</head>
+<body>
+    <div id="universe">
+        <div id="star"></div>
+        <div id="road1"></div>
+        <div id="road2"></div>
+        <div id="road3"></div>
+        <div id="road4"></div>
+    </div>
+    <div id="commend">
+        <h2>指挥中心</h2>
+        <div id="control1">
+            对1号飞船下达指令：<button>创建飞船</button><button>开始飞行</button><button>停止飞行</button><button>销毁</button>
+        </div>
+        <div id="control2">
+            对2号飞船下达指令：<button>创建飞船</button><button>开始飞行</button><button>停止飞行</button><button>销毁</button>
+        </div>
+        <div id="control3">
+            对3号飞船下达指令：<button>创建飞船</button><button>开始飞行</button><button>停止飞行</button><button>销毁</button>
+        </div>
+        <div id="control4">
+            对4号飞船下达指令：<button>创建飞船</button><button>开始飞行</button><button>停止飞行</button><button>销毁</button>
+        </div>
+    </div>
+    <script>
+          var buttons1=document.querySelector("#control1").querySelectorAll("button");
+          var buttons2=document.querySelector("#control2").querySelectorAll("button");
+          var buttons3=document.querySelector("#control3").querySelectorAll("button");
+          var buttons4=document.querySelector("#control4").querySelectorAll("button");
+          var universe=document.querySelector("#universe");
+          var site=[[265+"px",400+"px"],[265+"px",450+"px"],[265+"px",500+"px"],[265+"px",550+"px"]];//飞船起始位置
+          var centerSiteX=300,centerSiteY=300;  //圆心位置
+          var created={}    //已创建的飞船  {"1":{},"2":{},"3":{},"4":{}}
+          var timers=[[0,(1/2)*3.14],[0,(1/2)*3.14],[0,(1/2)*3.14],[0,(1/2)*3.14]];     //二维数组，存放定时器和起飞时的角度
+
+          //飞船类
+          function FlyShip(name,state) {    //参数为飞船的编号和状态  编号同样也为飞船元素的id
+              this.name=name;
+              this.state=state;
+          }
+          FlyShip.prototype={
+              constructor:FlyShip,
+              fly:function () {
+                  if(this.state=="still"){
+                      this.state="flying";
+                      var num = parseInt(this.name);
+                      var x = parseInt(site[num - 1][0]);
+                      var y = parseInt(site[num - 1][1]);
+                      var radius = parseInt(site[num - 1][1])+10 - 300;
+                      var node = document.getElementById(this.name);
+
+                      timers[num-1][0]= setInterval(function () {   //拿不到更新的角度。。。。
+                          node.style.top = y+"px";
+                          node.style.left =x +"px";
+                          timers[num-1][1]=timers[num-1][1]+(40/(radius*radius));
+                          x=radius*Math.cos(timers[num-1][1])+300-25;
+                          y=radius*Math.sin(timers[num-1][1])+300-5;
+                      }, 1000);
+                  }
+                  console.log(timers[0][0])
+              },
+              stop:function () {
+                  if(this.state=="flying"){
+                      this.state="still";
+
+                      clearInterval(timers[parseInt(this.name)-1][0]);
+                  }
+              },
+              delete:function () {
+                  var node=document.getElementById(this.name);
+                  universe.removeChild(node);
+                  delete created[this.name];
+              },
+              freeEnergy:function () {
+              }
+          };
+
+          //指挥官 绑定点击事件
+          document.querySelector("#commend").onclick=function (e) {
+              //创建飞船
+              if (e.target == buttons1[0] || e.target == buttons2[0] || e.target == buttons3[0] || e.target == buttons4[0]) {
+                  var number = e.target.parentNode.id.slice(7, 8);  //创建的飞船的编号"1","2","3","4"
+                  if(!created[number]){
+                      var newShip = createShip(number);
+                      universe.innerHTML += newShip;
+                      created[number]=new FlyShip(number,"still");
+                  }
+              }
+              //销毁飞船
+              if (e.target == buttons1[3] || e.target == buttons2[3] || e.target == buttons3[3] || e.target == buttons4[3]) {
+                  var num = e.target.parentNode.id.slice(7, 8); //要销毁的飞船编号1,2,3,4
+                  if(created[num]){
+                      created[num].delete();
+                  }
+              }
+              //开始飞行
+              if (e.target == buttons1[1] || e.target == buttons2[1] || e.target == buttons3[1] || e.target == buttons4[1]) {
+                  var Num = e.target.parentNode.id.slice(7, 8); //要起飞的飞船编号1,2,3,4
+                  if(created[Num]&&created[Num].state=="still"){
+                      created[Num].fly();
+                  }
+              }
+              //停止飞行
+              if (e.target == buttons1[2] || e.target == buttons2[2] || e.target == buttons3[2] || e.target == buttons4[2]) {
+                  var Num1 = e.target.parentNode.id.slice(7, 8); //要起飞的飞船编号1,2,3,4
+                  if(created[Num1]){
+                      created[Num1].stop();
+                  }
+              }
+          }
+        function createShip(i) {
+            return "<div class='airship' id='"+i+"' style='left: "+site[i-1][0]+";top:"+site[i-1][1]+"'>"+i+"号 "+"<span>100%</span>"+"</div>"
+        }
+
+    </script>
+</body>
+</html>

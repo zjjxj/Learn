@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>task30</title>
+    <style>
+        form {
+            margin: 100px auto;
+            width: 600px;
+        }
+
+        input {
+            border: 2px solid gainsboro;
+            font-size: larger;
+            border-radius: 3px;
+            width: 300px;
+            height: 40px;
+            margin-left: 70px;
+            box-shadow: black;
+        }
+
+        #confirmPassword {
+            margin-left: 30px;
+        }
+
+        label {
+            font-weight: bolder;
+            font-size: 20px;
+        }
+
+        button {
+            width: 80px;
+            height: 40px;
+            border: none;
+            background-color: dodgerblue;
+            border-radius: 5px;
+            font-size: larger;
+            margin-left: 20px;
+            color: white;
+            font-weight: bolder;
+        }
+
+        div {
+            color: silver;
+            margin-left: 130px;
+        }
+    </style>
+</head>
+<body>
+<form>
+    <label for="value">名称：</label><input type="text" placeholder="请输入" id="value"><br/>
+    <div id="valueRemind"></div>
+    <br/>
+    <label for="password">密码：</label><input type="text" placeholder="请输入" id="password"><br/>
+    <div id="passwordRemind"></div>
+    <br/>
+    <label for="confirmPassword">密码确认：</label><input type="text" placeholder="请输入" id="confirmPassword"><br/>
+    <div id="confirmPasswordRemind"></div>
+    <br/>
+    <label for="email">邮箱：</label><input type="text" placeholder="请输入" id="email"><br/>
+    <div id="emailRemind"></div>
+    <br/>
+    <label for="tel">手机：</label><input type="text" placeholder="请输入" id="tel"><br/>
+    <div id="telRemind"></div>
+    <br/>
+    <button type="submit">提交</button>
+</form>
+<script>
+    (function () {
+        var $ = function (el) {
+            return document.querySelector(el);
+        };
+        var $$ = function (el) {
+            return document.querySelectorAll(el);
+        };
+
+        function addEvent(elem, event, listener) {
+            if (elem.addEventListener) {
+                elem.addEventListener(event, listener, false);
+            } else if (elem.attachEvent) {
+                elem.attachEvent("on" + event, listener);
+            } else {
+                elem["on" + event] = listener;
+            }
+        };
+        var reminds = [
+            ["必填，长度为4~16个字符", "姓名不能为空", "格式正确", "格式错误", "allNum(value)>=4&&allNum(value)<=16", "fail"],
+            ["输入6-12纯数字密码", "密码不能为空", "密码格式正确", "密码格式错误", "/[0-9]{6,12}/", "fail"],
+            ["密码确认", "密码不一致", "密码不致", "密码不一致", "", "fail"],
+            ["输入邮箱", "邮箱不能为空", "邮箱格式正确", "邮箱格式不正确", "/[0-9a-zA-Z]+@[0-9a-z]{2,3}.com/", "fail"],
+            ["输入11位手机号", "手机号不能为空", "手机号格式正确", "手机号格式不正确", "/[0-9]{11}/.test(value)&&value.length==11", "fail"]
+        ];
+
+        Array.prototype.map.call($$("input"), function (data, index) {
+            addEvent(data, "focus", initRemind);//焦点提示
+            function initRemind() {
+                $$("div")[index].style.color = "";
+                $$("input")[index].style.borderColor = "";
+                $$("div")[index].innerHTML = reminds[index][0];
+                addEvent(data, "blur", function () {
+                    blurRemind(index, data);
+                });//失焦事件
+            };
+        });
+
+        addEvent($("button"), "click", function (e) {   //点击提交按钮
+            Array.prototype.map.call($$("input"), function (data, index) {
+                blurRemind(index, data);
+            });
+            if (reminds[0][5] === "success" && reminds[0][5] === "success"
+                    && reminds[0][5] === "success" && reminds[0][5] === "success" && reminds[0][5] === "success") {
+                alert("提交成功")
+            } else {
+                alert("提交失败")
+            }
+            e.preventDefault();
+        });
+
+        function styleError(inputs, index) {
+            $$("div")[index].style.color = "red";
+            inputs.style.borderColor = "red";
+            reminds[index][5] = "fail";
+        }
+
+        function styleRight(inputs, index) {
+            $$("div")[index].style.color = "green";
+            inputs.style.borderColor = "green";
+            reminds[index][5] = "success";
+        }
+
+        function blurRemind(index, data) {
+            var inputValue = data.value;
+            if (inputValue == "") {
+                $$("div")[index].innerHTML = reminds[index][1];
+                styleError(data, index);
+            } else {
+                switch (index) {
+                    case 0:
+                        if (allNum(inputValue) >= 4 && allNum(inputValue) <= 16) {
+                            $$("div")[index].innerHTML = reminds[index][2];
+                            styleRight(data, index);
+                        } else {
+                            $$("div")[index].innerHTML = reminds[index][3];
+                            styleError(data, index);
+                        };
+                        break;
+                    case 1:
+                        if (/[0-9]{6,12}/.test(inputValue)) {
+                            $$("div")[index].innerHTML = reminds[index][2];
+                            styleRight(data, index);
+                        } else {
+                            $$("div")[index].innerHTML = reminds[index][3];
+                            styleError(data, index);
+                        };
+                        break;
+                    case 2:
+                        if (inputValue !== $("#password").value) {
+                            $$("div")[index].innerHTML = reminds[index][3];
+                            styleError(data, index);
+                        } else {
+                            $$("div")[index].innerHTML = reminds[index][2];
+                            styleRight(data, index);
+                        };
+                        break;
+                    case 3:
+                        if (/[0-9a-zA-Z]+@[0-9a-z]{2,3}.com/.test(inputValue)) {
+                            $$("div")[index].innerHTML = reminds[index][2];
+                            styleRight(data, index);
+                        } else {
+                            $$("div")[index].innerHTML = reminds[index][3];
+                            styleError(data, index);
+                        };
+                        break;
+                    case 4:
+                        if (/[0-9]{11}/.test(inputValue) && inputValue.length == 11) {
+                            $$("div")[index].innerHTML = reminds[index][2];
+                            styleRight(data, index);
+
+                        }else{
+                            $$("div")[index].innerHTML = reminds[index][3];
+                            styleError(data, index);
+                        };
+                        break;
+                }
+            }
+        };
+
+        function allNum(str) {
+            var num = 0;
+            for (var i = 0; i < str.length; i++) {
+                if (str.charCodeAt(i) >= 0 && str.charCodeAt(i) <= 128) {  //ASCLL编码1-128为英文字符
+                    num += 1;
+                } else {
+                    num += 2;
+                }
+            }
+            return num;
+        }
+    })();
+</script>
+</body>
+</html>

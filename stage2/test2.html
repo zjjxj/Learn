@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #aa{
+            background-color: aqua;
+            width: 50px;
+            height: 50px;
+            margin-bottom: 50px;
+        }
+        #bb{
+            background-color: gold;
+            width: 50px;
+            height: 50px;
+
+        }
+    </style>
+</head>
+<body>
+  <div id="aa">aa</div>
+  <div id="bb">bb</div>
+  <button>a1</button>
+  <button>a2</button>
+  <button>b1</button>
+  <button>b2</button>
+  <script>
+      var btn=document.querySelectorAll("button");
+      var aa=document.querySelector("#aa");
+      var bb=document.querySelector("#bb");
+      var timer1;
+      var timer2;
+      btn[0].onclick=function () {
+          timer1=setInterval(function () {
+              aa.style.width=="10px"?aa.style.width="50px":aa.style.width="10px";
+          },100)
+      };
+      btn[1].onclick=function () {
+          clearInterval(timer1)
+      };
+      btn[2].onclick=function () {
+          timer2=setInterval(function () {
+              bb.style.width=="10px"?bb.style.width="50px":bb.style.width="10px";
+          },100)
+      };
+      btn[3].onclick=function () {
+          clearInterval(timer2)
+      };
+
+  </script>
+</body>
+</html>

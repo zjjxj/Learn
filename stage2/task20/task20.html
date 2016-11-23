@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <textarea id="textArea" rows="5" cols="20" placeholder="请输入字符并用不同分隔符分隔"></textarea>
+    <button id="insert">插入</button>
+    <input type="text" id="searchInput">
+    <button id="searchBtn">查询</button>
+    <div id="warp">
+    </div>
+    <script>
+        var renderData=[];
+        var $=function(el) {
+            return document.querySelector(el);
+        };
+        function updateData(elem,dataArr) {
+            var newString=elem.value.trim();
+            var pattern=/[\da-zA-Z\u4e00-\u9fa5]+/g;
+            var data=newString.match(pattern);
+            for (var i=0;i<data.length;i++){
+                dataArr.push(data[i]);
+             }
+        }
+        function render(elem,dataArr,inputElem) {
+            elem.innerHTML="";
+            updateData(inputElem,dataArr);
+            for(var i=0;i<dataArr.length;i++){
+                var newBtn=document.createElement("div");
+                newBtn.innerHTML=dataArr[i];
+                elem.appendChild(newBtn);
+            }
+        };
+        $("#insert").onclick=function () {
+            render($("#warp"),renderData,$("#textArea"));
+        };
+        $("#searchBtn").onclick=function () {
+            var searchInput=$("#searchInput").value;
+            var str=$("#warp").innerHTML;
+            if(str!=""){   //replace返回的是一个新的字符串
+                str=str.replace(new RegExp(searchInput,"g"),"<span style='color: #ff9900'>"+searchInput+"</span>");
+                $("#warp").innerHTML=str;
+              }
+        };
+
+    </script>
+</body>
+</html>

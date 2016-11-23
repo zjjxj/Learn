@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>task31</title>
+    <style>
+        #form2,#form3{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1">
+        <input type="radio" name="stu">在校生<br/>
+        <input type="radio" name="stu">非在校生<br/>
+    </form>
+    <form id="form2">
+    学校：<select>
+                <option>北京</option>
+                <option>上海</option>
+                <option>西安</option>
+         </select>
+         <select id="school">
+                <option>北京大学</option>
+                <option>清华大学</option>
+                <option>人民大学</option>
+                <option>师范大学</option>
+         </select>
+    </form>
+    <form id="form3">
+        <label for="employ">就业单位</label><input type="text" id="employ">
+    </form>
+    <script>
+        (function () {
+            var $=function (el) {
+                return document.querySelector(el);
+            };
+            var $$=function (el) {
+                return document.querySelectorAll(el);
+            };
+            var school=[["北京大学","清华大学","人民大学"],["同济大学","复旦大学","交通大学"],["西北大学","邮电大学","政法大学"]];
+            $("#form1").onchange=function () {
+                if($$("input")[0].checked===true){
+                    $("#form2").style.display="block";
+                    $("#form3").style.display="none";
+                }else if($$("input")[1].checked===true){
+                    $("#form3").style.display="block";
+                    $("#form2").style.display="none";
+                }
+            }
+            $$("select")[0].onchange=function () {
+                Array.prototype.map.call(this.querySelectorAll("option"),function (data,index) {
+                    if(data.selected==true){
+                        $("#school").innerHTML="";
+                        school[index].map(function (data) {
+                            var newOption=document.createElement("option");
+                            newOption.innerHTML=data;
+                            $("#school").appendChild(newOption);
+                        })
+                    }
+                })
+            }
+        })()
+    </script>
+</body>
+</html>

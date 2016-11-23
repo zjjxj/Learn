@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #hobbyArea span,#tagArea span{
+            width: 100px;
+            height: 100px;
+            border-radius:50px ;
+            display: inline-block;
+            margin: 20px 20px ;
+            line-height: 100px;
+            text-align: center;
+            background-color: bisque;
+        }
+    </style>
+</head>
+<body>
+    Tag:<input id="inputTag" type="text" placeholder="tag">
+    <div id="tagArea"></div>
+    <textarea id="inputHobby">唱歌 跳舞</textarea><br/>
+    <button id="hobbyBtn">确认兴趣爱好</button>
+    <div id="hobbyArea"></div>
+    <script>
+        function addEvent(elem,event,listener) {
+            if(elem.addEventListener){
+                elem.addEventListener(event,listener,false);
+            }else if(elem.attachEvent){
+                elem.attachEvent("on"+event,listener);
+            }else{
+                elem["on"+event]=listener;
+            }
+        }
+        (function () {
+            var $=function (el) {
+                return document.querySelector(el);
+            };
+            var contentHobby=$("#hobbyArea");
+            var contentTag=$("#tagArea");
+            var renderDataHobby=[];
+            var renderDataTag=[];
+            var queue={
+                updateData:function (str,renderData) {
+                    var pattern=/[\da-zA-Z\u4e00-\u9fa5]+/g;
+                    var data=str.match(pattern);
+                    data.map(function (dat) {
+                        renderData.push(dat);
+                    })
+                },
+                cutSame:function (renderData) {     //数组去重，返回新数组
+                    var obj={};
+                    var arr=[];
+                    renderData.map(function (data) {
+                        if(!obj[data]){
+                            obj[data]=1;
+                            arr.push(data);
+                        }
+                    })
+                    return arr;
+                },
+                limitNum:function (arr) {         //限制数组队列长度为10
+                    var overNum=arr.length-10;
+                    if(overNum>0){
+                        for(var i=0;i<overNum;i++){
+                            arr.shift();
+                        }
+                    }
+                    return arr;
+                },
+                render:function (arr,ele) {       //渲染
+                    var str="";
+                    arr.map(function (data) {
+                        str+="<span>"+data+"</span>"
+                    });
+                    ele.innerHTML = str;
+                }
+            };
+
+            //为hobby按钮绑定点击事件
+            addEvent( $("#hobbyBtn"),"click",function () {
+                queue.updateData($("#inputHobby").value,renderDataHobby);
+                var renderArr=queue.limitNum(queue.cutSame(renderDataHobby));
+                queue.render(renderArr,contentHobby);
+
+            });
+
+            //为tagInput绑定keyUp事件
+            addEvent($("#inputTag"),"keyup",function (e) {
+                if(e.keyCode===13||e.keyCode===32||e.keyCode===188) {
+                    var newValue;
+                    e.keyCode===188?newValue=this.value.slice(0,this.value.length-1).trim():newValue=this.value.trim();
+                    renderDataTag.push(newValue);
+                    var renderArr=queue.cutSame(renderDataTag);
+                    queue.render(renderArr,contentTag);
+                    $("#inputTag").value="";
+                }
+
+            })
+
+            addEvent($("#hobbyArea"),"mouseover",function(e){
+                if(e.target.nodeName==="SPAN"){
+                    var value=e.target.innerHTML;
+                    e.target.innerHTML="删除："+value;
+                }
+            });
+            addEvent($("#tagArea"),"mouseover",function(e){
+                if(e.target.nodeName==="SPAN"){
+                    var value=e.target.innerHTML;
+                    e.target.innerHTML="删除："+value;
+                }
+            });
+            addEvent($("#hobbyArea"),"mouseout",function(e){
+                if(e.target.nodeName==="SPAN"){
+                    e.target.innerHTML=e.target.innerHTML.slice(3);
+                }
+            });
+            addEvent($("#tagArea"),"mouseout",function(e){
+                if(e.target.nodeName==="SPAN"){
+                    e.target.innerHTML=e.target.innerHTML.slice(3);
+                }
+            });
+            addEvent($("#hobbyArea"),"click",function(e){
+                if(e.target.nodeName==="SPAN"){
+                    $("#hobbyArea").removeChild(e.target);
+                }
+            });
+            addEvent($("#tagArea"),"click",function(e){
+                if(e.target.nodeName==="SPAN"){
+                    $("#tagArea").removeChild(e.target);
+                }
+            });
+
+
+        })()
+    </script>
+</body>
+</html>
