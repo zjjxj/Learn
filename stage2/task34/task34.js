@@ -168,15 +168,17 @@
             }
         },
         MovLef:function () {
-            if(initCol<9){
-                this.rorate(initRow,initCol,4);
+            if(initCol>0){
+
                 this.TraLef();
+                this.rorate(initRow,initCol,4);
             }
         },
         MovRig:function () {
             if(initCol<9){
-                this.rorate(initRow,initCol,2);
                 this.TraRig();
+                this.rorate(initRow,initCol,2);
+
                 // initCol+=1;
                 // initDir=2;
                 // showChess(initRow,initCol,2);
@@ -184,8 +186,9 @@
         },
         MovTop:function () {
             if(initRow>0){
-                this.rorate(initRow,initCol,1);
                 this.TraTop();
+                this.rorate(initRow,initCol,1);
+
                 // initRow-=1;
                 // initDir=1;
                 // showChess(initRow,initCol,1);
@@ -193,13 +196,13 @@
         },
         MovBot:function () {
             if(initRow<9){
-                this.rorate(initRow,initCol,3);
                 this.TraBot();
+                this.rorate(initRow,initCol,3);
                 // initRow+=1;
                 // initDir=3;
                 // showChess(initRow,initCol,3);
             }
-        },
+        }
     };
 
     //点击事件
