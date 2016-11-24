@@ -201,9 +201,7 @@
     };
 
     //
-    var console={
-
-    };
+    var inputValue=""//
     var num=1;    //同步行数
     $("textarea").onkeyup=function (e) {
         if(e.keyCode===13){
@@ -211,11 +209,13 @@
             newSpan.innerHTML=num;
             $("#wrap").appendChild(newSpan);
             num++;
+            inputValue=this.value;
+            inputValue.replace(/\n/g," ");
         }
     };
     $("textarea").onscroll=function () {
         $("#wrap").style.marginTop=-this.scrollTop+"px";
-    }
+    };
     showChess(initRow, initCol, initDir);
     
 })();
