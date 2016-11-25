@@ -47,7 +47,7 @@
                 break;
         }
     };
-
+    var flag=1;
     //控制操作
     var control = {
         getElem: function () {
@@ -108,53 +108,85 @@
             console.log(this.getDeg(initDir, newDir));
             this.resitInitDir(initDir, this.getDeg(initDir, newDir));
         },
-        TraLef: function () {
-            if (initCol > 0) {
-                this.clearElem();
-                initCol -= 1;
-                showChess(initRow, initCol, initDir);
+        TraLef: function (steps) {
+            flag=1;
+            while(steps>0){
+                if (initCol > 0) {
+                    this.clearElem();
+                    initCol -= 1;
+                    showChess(initRow, initCol, initDir);
+                    steps--;
+                }else{
+                    flag=0;
+                    return;
+                }
+
+            }
+
+        },
+        TraRig: function (steps) {
+            flag=1;
+            while(steps>0){
+                if (initCol < 9) {
+                    this.clearElem();
+                    initCol += 1;
+                    showChess(initRow, initCol, initDir);
+                    steps--;
+                }else{
+                    flag=0;
+                    return;
+                }
+            }
+
+        },
+        TraTop: function (steps) {
+            flag=1;
+            while(steps>0){
+                if (initRow > 0) {
+                    this.clearElem();
+                    initRow -= 1;
+                    showChess(initRow, initCol, initDir);
+                    steps--;
+                }else{
+                    flag=0;
+                    return;
+                }
             }
         },
-        TraRig: function () {
-            if (initCol < 9) {
-                this.clearElem();
-                initCol += 1;
-                showChess(initRow, initCol, initDir);
+        TraBot: function (steps) {
+            flag=1;
+            while(steps>0){
+                if (initRow < 9) {
+                    this.clearElem();
+                    initRow += 1;
+                    showChess(initRow, initCol, initDir);
+                    steps--
+                }else{
+                    flag=0;
+                    return;
+                }
             }
+
         },
-        TraTop: function () {
-            if (initRow > 0) {
-                this.clearElem();
-                initRow -= 1;
-                showChess(initRow, initCol, initDir);
-            }
-        },
-        TraBot: function () {
-            if (initRow < 9) {
-                this.clearElem();
-                initRow += 1;
-                showChess(initRow, initCol, initDir);
-            }
-        },
-        MovLef: function () {
+        MovLef: function (steps) {
             if (initCol > 0) {
                 this.TraLef();
                 this.rorate(initRow, initCol, 4);
             }
         },
-        MovRig: function () {
+        MovRig: function (steps) {
             if (initCol < 9) {
                 this.TraRig();
                 this.rorate(initRow, initCol, 2);
             }
         },
-        MovTop: function () {
+        MovTop: function (steps) {
             if (initRow > 0) {
                 this.TraTop();
                 this.rorate(initRow, initCol, 1);
             }
         },
-        MovBot: function () {
+        MovBot: function (steps) {
             if (initRow < 9) {
                 this.TraBot();
                 this.rorate(initRow, initCol, 3);
@@ -165,58 +197,80 @@
     //点击事件
     $("button").onclick = function () {
         var input = $("input").value.toLowerCase().trim();
-        switch (input) {
-            case "mov left":
+        var step=input.slice(7,input.length);
+        switch (input.slice(0,7)) {
             case "mov lef":
-                control.MovLef();
+                control.MovLef(step);
                 break;
-            case "mov right":
             case "mov rig":
-                control.MovRig();
+                control.MovRig(step);
                 break;
             case "mov bot":
-            case "mov bottom":
-                control.MovBot();
+                control.MovBot(step);
                 break;
             case "mov top":
-                control.MovTop();
+                control.MovTop(step);
                 break;
-            case "tra left":
             case "tra lef":
-                control.TraLef();
+                control.TraLef(step);
                 break;
-            case "tra right":
             case "tra rig":
-                control.TraRig();
+                control.TraRig(step);
                 break;
             case "tra bot":
-            case "tra bottom":
-                control.TraBot();
+                control.TraBot(step);
                 break;
             case "tra top":
-                control.TraTop();
+                control.TraTop(step);
                 break;
         }
         return false;
     };
 
     //
-    var inputValue=""//
-    var num=1;    //同步行数
+    var inputValue=[];  //保存输入的指令
+    var remindRow=2;    //同步行数
+    var controlArr=["mov lef","mov top","mov bot","mov rig","tra top","tra bot","tra rig","tra lef"];//合法指令
     $("textarea").onkeyup=function (e) {
         if(e.keyCode===13){
             var newSpan=document.createElement("span");
-            newSpan.innerHTML=num;
+            newSpan.innerHTML=remindRow;
             $("#wrap").appendChild(newSpan);
-            num++;
-            inputValue=this.value;
-            inputValue.replace(/\n/g," ");
+
+            inputValue=this.value.replace(/\n/g,",").split(",");
+            inputValue=inputValue.slice(0,inputValue.length-1);
+            if(inputValue.length>0){
+                inputValue.map(function (data,index) {
+                    var steps=data.slice(7,data.length);
+                    var controls=data.slice(0,7);
+                    var spanElem=$("#wrap").children[index];
+                    if(steps<1||steps>9||controlArr.indexOf(controls)==-1){
+                        spanElem.style.backgroundColor="red";
+                        spanElem.style.borderRadius="12px";
+                    }else{
+                        spanElem.style.backgroundColor="";
+                        spanElem.style.borderRadius="";
+                    }
+                })
+            }
+
+            // var steps=inputValue[inputValue.length-1].slice(7,inputValue[inputValue.length-1].length);
+            // var controls=inputValue[inputValue.length-1].slice(0,7);
+            // var spanElem=$("#wrap").children[num-2];
+            // console.log(spanElem.innerHTML);
+            // console.log(steps);
+            // if(steps<1||steps>9||controlArr.indexOf(controls)==-1){
+            //     spanElem.style.backgroundColor="red";
+            //     spanElem.style.borderRadius="12px";
+            // }
+            remindRow++;
         }
     };
+
     $("textarea").onscroll=function () {
         $("#wrap").style.marginTop=-this.scrollTop+"px";
     };
     showChess(initRow, initCol, initDir);
-    
+
 })();
 
