@@ -1,0 +1,167 @@
+<!--任务描述
+
+如图，新增元素“墙”，墙是正方形不可进入、越过的区域
+新增修墙的指令，BUILD，执行指令时，会在当前方块面对的方向前修建一格墙壁，如果被指定修墙的地方
+超过边界墙或者已经有墙了，则取消修墙操作，并调用浏览器的console.log方法打印一个错误日志
+新增粉刷的指令，BRU color，color是一个字符串，保持和css中颜色编码一致。执行指令时，如果当前
+方块蓝色边面对方向有紧相邻的墙，则将这个墙颜色改为参数颜色，如果没有，则通过调用浏览器的console.log方法，打印一个错误日志
+尝试写一段代码，实现在空间内修建一个长长的五颜六色的墙或者有趣的图形
+新增一个按钮，可以在空间内随机生成一些墙
+增加一个指令：MOV TO x, y，会使得方块从当前位置移动到坐标为x，y的地方，移动过程中不能进入墙所
+在的地方，寻路算法请自行选择并实现，不做具体要求-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>task36</title>
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        #rowNumber span{
+            display: inline-block;
+            width: 51px;
+            height: 51px;
+            text-align: center;
+            line-height: 51px;
+            margin-left: -3px;
+        }
+        #colNumber span{
+            display: block;
+            width: 51px;
+            height: 51px;
+            text-align: center;
+            line-height: 51px;
+            margin-top: -1px;
+        }
+        #colNumber{
+            width:50px;
+        }
+        #map{
+            margin-top: -500px;
+            margin-left: 50px;
+            border: 1px solid black;
+            height: 511px;
+            width: 520px;
+
+        }
+        #map div{
+            height: 51px;
+            width: 520px;
+        }
+        #map span{
+            margin: 0px;
+            padding: 0px;
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 1px solid gainsboro;
+            transition: background-Color 1s linear,transform 1s linear;
+        }
+        form{
+            display: inline-block;
+        }
+        #control{
+            position: absolute;
+            top: 70px;
+            right: 100px;
+            width: 522px;
+
+        }
+        textarea{
+            position: absolute;
+            top:0px;
+            right: 0px;
+            background-color: black;
+            color: green;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        #number{
+            position: absolute;
+            top:1px;
+            left: 0px;
+            display: inline-block;
+            width: 25px;
+            height: 194px;
+            background-color: darkgrey ;
+            overflow: hidden;
+            margin-right: -3px;
+
+        }
+        #number span{
+            width:25px;
+            height: 24px;
+            display: inline-block;
+            background-color: darkgrey ;
+            font-size: 20px;
+            text-align: center;
+            color: white;
+
+        }
+        #button1{
+            position: absolute;
+            top:200px;
+            width: 50px;
+            height: 30px;
+
+        }
+        #button2{
+            position: absolute;
+            top:200px;
+            left: 100px;
+            width: 50px;
+            height: 30px;
+
+        }
+    </style>
+</head>
+<body>
+<div id="checkerBoard">
+    <div id="rowNumber">
+        <span></span>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+        <span>6</span>
+        <span>7</span>
+        <span>8</span>
+        <span>9</span>
+        <span>10</span>
+    </div>
+    <div id="colNumber">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+        <span>6</span>
+        <span>7</span>
+        <span>8</span>
+        <span>9</span>
+        <span>10</span>
+    </div>
+    <div id="map">
+
+    </div>
+</div>
+
+<div id="control">
+    <div id="number">
+        <div id="wrap">
+            <span>1</span>
+        </div>
+    </div>
+    <form>
+        <textarea rows="8" cols="40"></textarea>
+        <button id="button1">执行</button>
+        <button id="button2">build wall</button>
+    </form>
+</div>
+
+<script src="task36.js"></script>
+</body>
+</html>
