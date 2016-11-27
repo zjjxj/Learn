@@ -306,20 +306,33 @@
         var elem = $("#map").getElementsByTagName("div")[row].getElementsByTagName("span")[col];
         elem.style.backgroundColor=color;
     }
-    $("#button2").onclick=function () {
+    $("#button2").onclick=function () {   //定时器！！！！！！
         var wallNum=15;
         while(wallNum!==0){
-            var row=Math.ceil((Math.random()*10));
-            var col=Math.ceil((Math.random()*10));
-            if(row!==initRow){
-                buildingWall(row,col,"darkgrey");
-            }
+            setTimeout(function () {
+                var row=Math.ceil((Math.random()*10));
+                var col=Math.ceil((Math.random()*10));
+                if(row!==initRow||col!=initCol){
+                    buildingWall(row,col,"darkgrey");
+                }
+            },0);
             wallNum--;
         }
-
-
         return false;
     };
+    // $("#button2").onclick=function () {
+    //     var wallNum=15;
+    //     while(wallNum!==0){
+    //         var row=Math.ceil((Math.random()*10));
+    //         var col=Math.ceil((Math.random()*10));
+    //         if(row!==initRow){
+    //             buildingWall(row,col,"darkgrey");
+    //         }
+    //         wallNum--;
+    //     }
+    //
+    //     return false;
+    // };
     //
     var inputValue=[];  //保存输入的指令
     var remindRow=2;    //同步行数
