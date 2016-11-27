@@ -170,25 +170,25 @@
         },
         MovLef: function (steps) {
             if (initCol > 0) {
-                this.TraLef();
+                this.TraLef(steps);
                 this.rorate(initRow, initCol, 4);
             }
         },
         MovRig: function (steps) {
             if (initCol < 9) {
-                this.TraRig();
+                this.TraRig(steps);
                 this.rorate(initRow, initCol, 2);
             }
         },
         MovTop: function (steps) {
             if (initRow > 0) {
-                this.TraTop();
+                this.TraTop(steps);
                 this.rorate(initRow, initCol, 1);
             }
         },
         MovBot: function (steps) {
             if (initRow < 9) {
-                this.TraBot();
+                this.TraBot(steps);
                 this.rorate(initRow, initCol, 3);
             }
         }
@@ -196,34 +196,36 @@
 
     //点击事件
     $("button").onclick = function () {
-        var input = $("input").value.toLowerCase().trim();
-        var step=input.slice(7,input.length);
-        switch (input.slice(0,7)) {
-            case "mov lef":
-                control.MovLef(step);
-                break;
-            case "mov rig":
-                control.MovRig(step);
-                break;
-            case "mov bot":
-                control.MovBot(step);
-                break;
-            case "mov top":
-                control.MovTop(step);
-                break;
-            case "tra lef":
-                control.TraLef(step);
-                break;
-            case "tra rig":
-                control.TraRig(step);
-                break;
-            case "tra bot":
-                control.TraBot(step);
-                break;
-            case "tra top":
-                control.TraTop(step);
-                break;
-        }
+        inputValue.map(function (input) {
+            var step=input.slice(7,input.length);
+            switch (input.slice(0,7)) {
+                case "mov lef":
+                    control.MovLef(step);
+                    break;
+                case "mov rig":
+                    control.MovRig(step);
+                    break;
+                case "mov bot":
+                    control.MovBot(step);
+                    break;
+                case "mov top":
+                    control.MovTop(step);
+                    break;
+                case "tra lef":
+                    control.TraLef(step);
+                    break;
+                case "tra rig":
+                    control.TraRig(step);
+                    break;
+                case "tra bot":
+                    control.TraBot(step);
+                    break;
+                case "tra top":
+                    control.TraTop(step);
+                    break;
+            }
+        })
+
         return false;
     };
 
@@ -253,16 +255,6 @@
                     }
                 })
             }
-
-            // var steps=inputValue[inputValue.length-1].slice(7,inputValue[inputValue.length-1].length);
-            // var controls=inputValue[inputValue.length-1].slice(0,7);
-            // var spanElem=$("#wrap").children[num-2];
-            // console.log(spanElem.innerHTML);
-            // console.log(steps);
-            // if(steps<1||steps>9||controlArr.indexOf(controls)==-1){
-            //     spanElem.style.backgroundColor="red";
-            //     spanElem.style.borderRadius="12px";
-            // }
             remindRow++;
         }
     };
