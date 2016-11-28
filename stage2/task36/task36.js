@@ -125,7 +125,6 @@
         TraLef: function (steps) {
             while(steps>0){
                 if (initCol > 0) {
-                    this.clearElem();
                     initCol -= 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
@@ -136,7 +135,6 @@
         TraRig: function (steps) {
             while(steps>0){
                 if (initCol < 9) {
-                    this.clearElem();
                     initCol += 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
@@ -147,7 +145,6 @@
         TraTop: function (steps) {
             while(steps>0){
                 if (initRow > 0) {
-                    this.clearElem();
                     initRow -= 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
@@ -157,7 +154,6 @@
         TraBot: function (steps) {
             while(steps>0){
                 if (initRow < 9) {
-                    this.clearElem();
                     initRow += 1;
                     showChess(initRow, initCol, initDir);
                     steps--
@@ -259,45 +255,52 @@
         }
     };
 
+   var doCommand= function(commands) {
+        console.log(commands)
+        var step=commands.slice(7,commands.length);
+        var colorWall=commands.slice(4);
+        switch (commands.slice(0,7)) {
+            case "mov lef":
+                control.MovLef(step);
+                break;
+            case "mov rig":
+                control.MovRig(step);
+                break;
+            case "mov bot":
+                control.MovBot(step);
+                break;
+            case "mov top":
+                control.MovTop(step);
+                break;
+            case "tra lef":
+                control.TraLef(step);
+                break;
+            case "tra rig":
+                control.TraRig(step);
+                break;
+            case "tra bot":
+                control.TraBot(step);
+                break;
+            case "tra top":
+                control.TraTop(step);
+                break;
+            case "build":
+                control.buildWall();
+                break;
+        }
+        if(commands.slice(0,3)==="bru"){
+            control.changeColor(colorWall);
+        }
+    }
     //点击执行按钮
-    $("button").onclick = function () {
-        inputValue.map(function (input) {
-            var step=input.slice(7,input.length);
-            var colorWall=input.slice(4);
-            switch (input.slice(0,7)) {
-                case "mov lef":
-                    control.MovLef(step);
-                    break;
-                case "mov rig":
-                    control.MovRig(step);
-                    break;
-                case "mov bot":
-                    control.MovBot(step);
-                    break;
-                case "mov top":
-                    control.MovTop(step);
-                    break;
-                case "tra lef":
-                    control.TraLef(step);
-                    break;
-                case "tra rig":
-                    control.TraRig(step);
-                    break;
-                case "tra bot":
-                    control.TraBot(step);
-                    break;
-                case "tra top":
-                    control.TraTop(step);
-                    break;
-                case "build":
-                    control.buildWall();
-                    break;
+    $("button").onclick = function () {   //
+        setTimeout(function () {
+            var a=inputValue.shift();
+            doCommand(a);
+            if(inputValue.length>0){
+                setTimeout(arguments.callee,1300);
             }
-            if(input.slice(0,3)==="bru"){
-                control.changeColor(colorWall);
-            }
-        })
-        inputValue=[];
+        },100)
         return false;
     };
 
@@ -306,9 +309,11 @@
         var wallNum=15;
         while(wallNum!==0){
             setTimeout(function () {
-                var row=Math.ceil((Math.random()*10));
-                var col=Math.ceil((Math.random()*10));
-                if(row!==initRow||col!=initCol){
+                var row=Math.ceil((Math.random()*10))-1;
+                var col=Math.ceil((Math.random()*10))-1;
+                console.log(initRow)
+                console.log(initCol)
+                if(row!==initRow||col!==initCol){
                     buildingWall(row,col,"darkgrey");
                 }
             },0);
@@ -322,7 +327,7 @@
     //     while(wallNum!==0){
     //         var row=Math.ceil((Math.random()*10));
     //         var col=Math.ceil((Math.random()*10));
-    //         if(row!==initRow){
+    //         if(row!==initRow||col!==initCol){
     //             buildingWall(row,col,"darkgrey");
     //         }
     //         wallNum--;
@@ -330,7 +335,7 @@
     //
     //     return false;
     // };
-    //
+
 
     var inputValue=[];  //保存输入的指令
     var remindRow=2;    //同步行数
