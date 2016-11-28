@@ -5,7 +5,7 @@
 
     (function createMap() {
         for (var i = 0; i < 10; i++) {
-            $("#map").innerHTML += "<div><span></span><span></span><span>" +
+            $("#map").innerHTML += "<div class='grad'><span></span><span></span><span>" +
                 "</span><span></span><span></span><span></span>" +
                 "<span></span><span></span><span></span><span></span></div>"
         }
@@ -23,33 +23,45 @@
     var initDir = getDir();
     var initRow = getRowCol();
     var initCol = getRowCol();
+    var initDeg=0  //旋转角度
 
-    //生成棋子，dir表示方向 1，2，3，4依次表示上右下左
-    function showChess(rows, cols, dir) {
-        var elem = $("#map").getElementsByTagName("div")[rows].getElementsByTagName("span")[cols];
-        elem.style.backgroundColor = "red";
-        switch (dir) {
+    //根据行列数和方向生成棋子，dir表示方向 1，2，3，4依次表示上右下左
+    function showChess(rows, cols, dir) {  //51
+        var elem = $("#chess");
+
+         switch (dir) {
             case 1:
-                elem.style.borderTop = "10px solid blue";
-                elem.style.height = "41px";
+                elem.style.top = rows*51+"px";
+                elem.style.left = cols*52+"px";
                 break;
             case 2:
-                elem.style.borderRight = "10px solid blue";
-                elem.style.width = "41px";
+                elem.style.top = rows*51+"px";
+                elem.style.left = cols*52+"px";
+                elem.style.transform="rotate(90deg)";
+                initDeg=90;
                 break;
             case 3:
-                elem.style.borderBottom = "10px solid blue";
-                elem.style.height = "41px";
+                elem.style.top = rows*51+"px";
+                elem.style.left = cols*52+"px";
+                elem.style.transform="rotate(180deg)";
+                initDeg=180;
                 break;
             case 4:
-                elem.style.borderLeft = "10px solid blue";
-                elem.style.width = "41px";
+                elem.style.top = rows*51+"px";
+                elem.style.left = cols*52+"px";
+                elem.style.transform="rotate(270deg)";
+                initDeg=270
                 break;
         }
     };
-    var flag=1;
 
-    //控制操作
+    //根据行列数和颜色建墙
+    function buildingWall(row,col,color) {
+        var elem = $("#map").getElementsByTagName("div")[row].getElementsByTagName("span")[col];
+        elem.style.backgroundColor=color;
+    }
+
+    //控制器
     var control = {
         getElem: function (row,col) {
             return $("#map").getElementsByTagName("div")[row].getElementsByTagName("span")[col];
@@ -62,11 +74,11 @@
             elem.style.border = "";
 
         },
-        getDeg: function (initDeg, newDeg) {  //获得旋转角度
-            var x = newDeg - initDeg;
+        getDeg: function (dir, newDir) {  //获得旋转角度
+            var x = newDir - dir+initDeg/90;
             return 90 * x;
         },
-        resitInitDir: function (dir, deg) {   //重置初始方向，参数为初始方向和旋转角度
+        resetInitDir: function (dir, deg) {   //重置初始方向，参数为初始方向和旋转角度
             deg = Math.abs(deg);
             if (dir === 1) {
                 if (deg === 90) {
@@ -102,67 +114,53 @@
                 }
             }
         },
-        rorate: function (rows, cols, newDir) {   //旋转
-            var elem = this.getElem(initRow,initCol);
+        rorate: function (newDir) {   //旋转
+            var elem = $("#chess");
             elem.style.transform = "rotate(" + this.getDeg(initDir, newDir) + "deg)";
-            this.resitInitDir(initDir, this.getDeg(initDir, newDir));
+            console.log(initDir);
+            console.log(initDeg);
+            console.log(this.getDeg(initDir, newDir));
+            this.resetInitDir(initDir, this.getDeg(initDir, newDir));
         },
         TraLef: function (steps) {
-            flag=1;
             while(steps>0){
                 if (initCol > 0) {
                     this.clearElem();
                     initCol -= 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
-                }else{
-                    flag=0;
-                    return;
                 }
-
             }
 
         },
         TraRig: function (steps) {
-            flag=1;
             while(steps>0){
                 if (initCol < 9) {
                     this.clearElem();
                     initCol += 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
-                }else{
-                    flag=0;
-                    return;
                 }
             }
 
         },
         TraTop: function (steps) {
-            flag=1;
             while(steps>0){
                 if (initRow > 0) {
                     this.clearElem();
                     initRow -= 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
-                }else{
-                    flag=0;
-                    return;
                 }
             }
         },
         TraBot: function (steps) {
-            flag=1;
             while(steps>0){
                 if (initRow < 9) {
                     this.clearElem();
                     initRow += 1;
                     showChess(initRow, initCol, initDir);
                     steps--
-                }else{
-                    flag=0;
-                    return;
                 }
             }
 
@@ -170,25 +168,25 @@
         MovLef: function (steps) {
             if (initCol > 0) {
                 this.TraLef(steps);
-                this.rorate(initRow, initCol, 4);
+                this.rorate(4);
             }
         },
         MovRig: function (steps) {
             if (initCol < 9) {
                 this.TraRig(steps);
-                this.rorate(initRow, initCol, 2);
+                this.rorate(2);
             }
         },
         MovTop: function (steps) {
             if (initRow > 0) {
                 this.TraTop(steps);
-                this.rorate(initRow, initCol, 1);
+                this.rorate(1);
             }
         },
         MovBot: function (steps) {
             if (initRow < 9) {
                 this.TraBot(steps);
-                this.rorate(initRow, initCol, 3);
+                this.rorate(3);
             }
         },
         buildWall:function () {
@@ -261,7 +259,7 @@
         }
     };
 
-    //点击事件
+    //点击执行按钮
     $("button").onclick = function () {
         inputValue.map(function (input) {
             var step=input.slice(7,input.length);
@@ -302,10 +300,8 @@
         inputValue=[];
         return false;
     };
-    function buildingWall(row,col,color) {
-        var elem = $("#map").getElementsByTagName("div")[row].getElementsByTagName("span")[col];
-        elem.style.backgroundColor=color;
-    }
+
+    //点击建墙按钮
     $("#button2").onclick=function () {   //定时器！！！！！！
         var wallNum=15;
         while(wallNum!==0){
@@ -320,6 +316,7 @@
         }
         return false;
     };
+
     // $("#button2").onclick=function () {
     //     var wallNum=15;
     //     while(wallNum!==0){
@@ -334,9 +331,13 @@
     //     return false;
     // };
     //
+
     var inputValue=[];  //保存输入的指令
     var remindRow=2;    //同步行数
-    var controlArr=["mov lef","mov top","mov bot","mov rig","tra top","tra bot","tra rig","tra lef","build","bru"];//合法指令
+    var controlArr=["mov lef","mov top","mov bot","mov rig","tra top"
+        ,"tra bot","tra rig","tra lef","build","bru"];//合法指令数组
+
+    //按回车键进行输入验证
     $("textarea").onkeyup=function (e) {
         if(e.keyCode===13){
             var newSpan=document.createElement("span");
@@ -368,10 +369,12 @@
         }
     };
 
+    //滑动事件，提示行号同步滑动
     $("textarea").onscroll=function () {
         $("#wrap").style.marginTop=-this.scrollTop+"px";
     };
-    showChess(initRow, initCol, initDir);
 
+    //初始化棋子
+    showChess(initRow, initCol, initDir);
 })();
 

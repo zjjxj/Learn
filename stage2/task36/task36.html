@@ -40,6 +40,7 @@
             width:50px;
         }
         #map{
+            position: relative;
             margin-top: -500px;
             margin-left: 50px;
             border: 1px solid black;
@@ -47,7 +48,15 @@
             width: 520px;
 
         }
-        #map div{
+        #map #chess{
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            transition: transform 1s linear,top 1s linear,left 1s linear;
+
+
+        }
+        #map .grad{
             height: 51px;
             width: 520px;
         }
@@ -58,7 +67,6 @@
             width: 50px;
             height: 50px;
             border: 1px solid gainsboro;
-            transition: background-Color 1s linear,transform 1s linear;
         }
         form{
             display: inline-block;
@@ -116,6 +124,10 @@
             height: 30px;
 
         }
+        #chess img{
+            margin:5px 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -146,10 +158,11 @@
         <span>10</span>
     </div>
     <div id="map">
-
+        <div id="chess">
+            <img src="../../images/chess.gif" width="42px" height="42px" >
+        </div>
     </div>
 </div>
-
 <div id="control">
     <div id="number">
         <div id="wrap">
@@ -162,7 +175,6 @@
         <button id="button2">build wall</button>
     </form>
 </div>
-
 <script src="task36.js"></script>
 </body>
 </html>
