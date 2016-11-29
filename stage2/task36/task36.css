@@ -1,0 +1,111 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+#rowNumber span{
+    display: inline-block;
+    width: 51px;
+    height: 51px;
+    text-align: center;
+    line-height: 51px;
+    margin-left: -3px;
+}
+#colNumber span{
+    display: block;
+    width: 51px;
+    height: 51px;
+    text-align: center;
+    line-height: 51px;
+    margin-top: -1px;
+}
+#colNumber{
+    width:50px;
+}
+#map{
+    position: relative;
+    margin-top: -500px;
+    margin-left: 50px;
+    border: 1px solid deepskyblue;
+    height: 511px;
+    width: 520px;
+
+}
+#map #chess{
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    transition: transform 1s linear,top 1s linear,left 1s linear;
+
+
+}
+#map .grad{
+    height: 51px;
+    width: 520px;
+}
+#map span{
+    margin: 0px;
+    padding: 0px;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 1px solid gainsboro;
+}
+form{
+    display: inline-block;
+}
+#control{
+    position: absolute;
+    top: 70px;
+    right: 100px;
+    width: 522px;
+
+}
+textarea{
+    position: absolute;
+    top:0px;
+    right: 0px;
+    background-color: black;
+    color: green;
+    font-weight: bold;
+    font-size: 20px;
+}
+#number{
+    position: absolute;
+    top:1px;
+    left: 0px;
+    display: inline-block;
+    width: 25px;
+    height: 194px;
+    background-color: darkgrey ;
+    overflow: hidden;
+    margin-right: -3px;
+
+}
+#number span{
+    width:25px;
+    height: 24px;
+    display: inline-block;
+    background-color: darkgrey ;
+    font-size: 20px;
+    text-align: center;
+    color: white;
+
+}
+#button1{
+    position: absolute;
+    top:200px;
+    width: 90px;
+    height: 50px;
+
+}
+#button2{
+    position: absolute;
+    top:200px;
+    left: 100px;
+    width: 90px;
+    height: 50px;
+
+}
+#chess img{
+    margin:5px 5px;
+}

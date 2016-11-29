@@ -10,6 +10,7 @@
                 "<span></span><span></span><span></span><span></span></div>"
         }
     })();
+    // window.onload=createMap;
 
     function getDir() {
         var num = Math.ceil(Math.random() * 4);
@@ -23,12 +24,11 @@
     var initDir = getDir();
     var initRow = getRowCol();
     var initCol = getRowCol();
-    var initDeg=0  //旋转角度
+    var initDeg=0 ; //旋转角度
 
     //根据行列数和方向生成棋子，dir表示方向 1，2，3，4依次表示上右下左
     function showChess(rows, cols, dir) {  //51
         var elem = $("#chess");
-
          switch (dir) {
             case 1:
                 elem.style.top = rows*51+"px";
@@ -57,14 +57,14 @@
 
     //根据行列数和颜色建墙
     function buildingWall(row,col,color) {
-        var elem = $("#map").getElementsByTagName("div")[row].getElementsByTagName("span")[col];
-        elem.style.backgroundColor=color;
+        var elem = $("#map").getElementsByClassName("grad")[row].getElementsByTagName("span")[col];
+        elem.style.backgroundColor = color;
     }
 
     //控制器
     var control = {
         getElem: function (row,col) {
-            return $("#map").getElementsByTagName("div")[row].getElementsByTagName("span")[col];
+            return $("#map").getElementsByClassName("grad")[row].getElementsByTagName("span")[col];
         },
         clearElem: function () {
             var elem = this.getElem(initRow,initCol);
@@ -116,11 +116,15 @@
         },
         rorate: function (newDir) {   //旋转
             var elem = $("#chess");
-            elem.style.transform = "rotate(" + this.getDeg(initDir, newDir) + "deg)";
-            console.log(initDir);
             console.log(initDeg);
-            console.log(this.getDeg(initDir, newDir));
-            this.resetInitDir(initDir, this.getDeg(initDir, newDir));
+            initDeg=this.getDeg(initDir, newDir);
+            elem.style.transform = "rotate(" +initDeg  + "deg)";
+
+            // this.resetInitDir(initDir, this.getDeg(initDir, newDir));
+            // console.log(initDir);
+            console.log(initDeg);
+            initDir=(initDir+initDeg/90);
+            // console.log(initDir)
         },
         TraLef: function (steps) {
             while(steps>0){
@@ -130,7 +134,6 @@
                     steps--;
                 }
             }
-
         },
         TraRig: function (steps) {
             while(steps>0){
@@ -140,7 +143,6 @@
                     steps--;
                 }
             }
-
         },
         TraTop: function (steps) {
             while(steps>0){
@@ -159,7 +161,6 @@
                     steps--
                 }
             }
-
         },
         MovLef: function (steps) {
             if (initCol > 0) {
@@ -255,8 +256,8 @@
         }
     };
 
+    //执行指令
    var doCommand= function(commands) {
-        console.log(commands)
         var step=commands.slice(7,commands.length);
         var colorWall=commands.slice(4);
         switch (commands.slice(0,7)) {
@@ -291,50 +292,32 @@
         if(commands.slice(0,3)==="bru"){
             control.changeColor(colorWall);
         }
-    }
+    };
+
     //点击执行按钮
-    $("button").onclick = function () {   //
+    $("button").onclick = function () {
         setTimeout(function () {
-            var a=inputValue.shift();
-            doCommand(a);
+            doCommand(inputValue.shift());
             if(inputValue.length>0){
                 setTimeout(arguments.callee,1300);
             }
-        },100)
+        },100);
         return false;
     };
 
-    //点击建墙按钮
-    $("#button2").onclick=function () {   //定时器！！！！！！
+    $("#button2").onclick=function () {
         var wallNum=15;
         while(wallNum!==0){
-            setTimeout(function () {
-                var row=Math.ceil((Math.random()*10))-1;
-                var col=Math.ceil((Math.random()*10))-1;
-                console.log(initRow)
-                console.log(initCol)
-                if(row!==initRow||col!==initCol){
-                    buildingWall(row,col,"darkgrey");
-                }
-            },0);
+            var row=Math.ceil((Math.random()*10))-1;
+            var col=Math.ceil((Math.random()*10))-1;
+            if(row!==initRow||col!==initCol){
+                buildingWall(row,col,"darkgrey");
+            }
             wallNum--;
         }
         return false;
-    };
 
-    // $("#button2").onclick=function () {
-    //     var wallNum=15;
-    //     while(wallNum!==0){
-    //         var row=Math.ceil((Math.random()*10));
-    //         var col=Math.ceil((Math.random()*10));
-    //         if(row!==initRow||col!==initCol){
-    //             buildingWall(row,col,"darkgrey");
-    //         }
-    //         wallNum--;
-    //     }
-    //
-    //     return false;
-    // };
+    };
 
 
     var inputValue=[];  //保存输入的指令
@@ -342,34 +325,38 @@
     var controlArr=["mov lef","mov top","mov bot","mov rig","tra top"
         ,"tra bot","tra rig","tra lef","build","bru"];//合法指令数组
 
+
+    function verify(value){
+        inputValue=value.replace(/\n/g,",").split(",");
+        inputValue=inputValue.slice(0,inputValue.length-1);
+        if(inputValue.length>0){
+            inputValue.map(function (data,index) {
+                var steps=data.slice(7,data.length);
+                var controls=data.slice(0,7);
+                var wallColor=data.slice(0,3);
+                var spanElem=$("#wrap").children[index];
+                if((steps&&steps<1)||(steps&&steps>9)||controlArr.indexOf(controls)===-1){
+                    spanElem.style.backgroundColor="red";
+                    spanElem.style.borderRadius="12px";
+                    if(!(controlArr.indexOf(wallColor)===-1)){
+                        spanElem.style.backgroundColor="";
+                        spanElem.style.borderRadius="";
+                    }
+                }else {
+                    spanElem.style.backgroundColor="";
+                    spanElem.style.borderRadius="";
+                }
+            })
+        }
+    };
+
     //按回车键进行输入验证
     $("textarea").onkeyup=function (e) {
         if(e.keyCode===13){
             var newSpan=document.createElement("span");
             newSpan.innerHTML=remindRow;
             $("#wrap").appendChild(newSpan);
-
-            inputValue=this.value.replace(/\n/g,",").split(",");
-            inputValue=inputValue.slice(0,inputValue.length-1);
-            if(inputValue.length>0){
-                inputValue.map(function (data,index) {
-                    var steps=data.slice(7,data.length);
-                    var controls=data.slice(0,7);
-                    var wallColor=data.slice(0,3);
-                    var spanElem=$("#wrap").children[index];
-                    if((steps&&steps<1)||(steps&&steps>9)||controlArr.indexOf(controls)===-1){
-                        spanElem.style.backgroundColor="red";
-                        spanElem.style.borderRadius="12px";
-                        if(!(controlArr.indexOf(wallColor)===-1)){
-                            spanElem.style.backgroundColor="";
-                            spanElem.style.borderRadius="";
-                        }
-                    }else {
-                        spanElem.style.backgroundColor="";
-                        spanElem.style.borderRadius="";
-                    }
-                })
-            }
+            verify(this.value);
             remindRow++;
         }
     };
