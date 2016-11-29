@@ -34,7 +34,7 @@
     position: absolute;
     width: 52px;
     height: 52px;
-    transition: transform 1s linear,top 1s linear,left 1s linear;
+    transition: transform 0.5s linear,top 0.5s linear,left 0.5s linear;
 
 
 }

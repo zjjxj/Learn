@@ -225,6 +225,11 @@
                     }
                     break;
             }
+        },
+        moveTo:function (x,y) {
+            var difX=x-initRow;
+            var difY=y-initCol;
+
         }
     };
 
@@ -234,7 +239,6 @@
         var colorWall=commands.slice(4);
         switch (commands.slice(0,7)) {
             case "mov lef":
-                console.log()
                 control.MovLef(step);
                 break;
             case "mov rig":
@@ -261,6 +265,9 @@
             case "build":
                 control.buildWall();
                 break;
+            case "mov to ":
+                var site=steps.split(",");
+                control.moveTo(parseInt(site[0]),parseInt(site[1]));
         }
         if(commands.slice(0,3)==="bru"){
             control.changeColor(colorWall);
@@ -272,7 +279,7 @@
         setTimeout(function () {
             doCommand(inputValue.shift());
             if(inputValue.length>0){
-                setTimeout(arguments.callee,1300);
+                setTimeout(arguments.callee,1200);
             }
         },100);
         return false;
@@ -296,7 +303,7 @@
     var inputValue=[];  //保存输入的指令
     var remindRow=2;    //同步行数
     var controlArr=["mov lef","mov top","mov bot","mov rig","tra top"
-        ,"tra bot","tra rig","tra lef","build","bru"];//合法指令数组
+        ,"tra bot","tra rig","tra lef","build","bru","mov to "];//合法指令数组
 
 
     function verify(value){
@@ -324,13 +331,21 @@
     };
 
     //按回车键进行输入验证
-    $("textarea").onkeyup=function (e) {
+    document.onkeyup=function (e) {
         if(e.keyCode===13){
             var newSpan=document.createElement("span");
             newSpan.innerHTML=remindRow;
             $("#wrap").appendChild(newSpan);
-            verify(this.value);
+            verify($("textarea").value);
             remindRow++;
+        }else if(e.keyCode===37){
+            control.MovLef(1);
+        }else if(e.keyCode===38){
+            control.MovTop(1);
+        }else if(e.keyCode===39){
+            control.MovRig(1);
+        }else if(e.keyCode===40){
+            control.MovBot(1);
         }
     };
 
