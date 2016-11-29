@@ -10,7 +10,6 @@
                 "<span></span><span></span><span></span><span></span></div>"
         }
     })();
-    // window.onload=createMap;
 
     function getDir() {
         var num = Math.ceil(Math.random() * 4);
@@ -24,7 +23,7 @@
     var initDir = getDir();
     var initRow = getRowCol();
     var initCol = getRowCol();
-    var initDeg=0 ; //旋转角度
+
 
     //根据行列数和方向生成棋子，dir表示方向 1，2，3，4依次表示上右下左
     function showChess(rows, cols, dir) {  //51
@@ -62,6 +61,7 @@
     }
 
     //控制器
+    var initDeg=0 ; //旋转角度
     var control = {
         getElem: function (row,col) {
             return $("#map").getElementsByClassName("grad")[row].getElementsByTagName("span")[col];
@@ -74,91 +74,63 @@
             elem.style.border = "";
 
         },
-        getDeg: function (dir, newDir) {  //获得旋转角度
-            var x = newDir - dir+initDeg/90;
-            return 90 * x;
-        },
-        resetInitDir: function (dir, deg) {   //重置初始方向，参数为初始方向和旋转角度
-            deg = Math.abs(deg);
-            if (dir === 1) {
-                if (deg === 90) {
-                    initDir = 2
-                } else if (deg === 180) {
-                    initDir = 3
-                } else if (deg === 270) {
-                    initDir = 4
-                }
-            } else if (dir === 2) {
-                if (deg === 90) {
-                    initDir = 3
-                } else if (deg === 180) {
-                    initDir = 4
-                } else if (deg === 270) {
-                    initDir = 1
-                }
-            } else if (dir === 3) {
-                if (deg === 90) {
-                    initDir = 4
-                } else if (deg === 180) {
-                    initDir = 1
-                } else if (deg === 270) {
-                    initDir = 2
-                }
-            } else if (dir === 4) {
-                if (deg === 90) {
-                    initDir = 1;
-                } else if (deg === 180) {
-                    initDir = 2;
-                } else if (deg === 270) {
-                    initDir = 3;
-                }
-            }
+        getDeg: function (dir, newDir) {  //每次的旋转角度
+            var x = newDir - dir;
+            if(x>0) return 90*x;
+            else return 360+90*x;
+
         },
         rorate: function (newDir) {   //旋转
-            var elem = $("#chess");
-            console.log(initDeg);
-            initDeg=this.getDeg(initDir, newDir);
-            elem.style.transform = "rotate(" +initDeg  + "deg)";
-
-            // this.resetInitDir(initDir, this.getDeg(initDir, newDir));
-            // console.log(initDir);
-            console.log(initDeg);
-            initDir=(initDir+initDeg/90);
-            // console.log(initDir)
+            initDeg=initDeg+this.getDeg(initDir, newDir);
+            $("#chess").style.transform = "rotate(" +initDeg + "deg)";
+            initDir=(initDeg/90)%4+1;
         },
         TraLef: function (steps) {
             while(steps>0){
-                if (initCol > 0) {
+                if (initCol > 0&&this.getElem(initRow, initCol-1).style.backgroundColor!=="darkgrey") {
                     initCol -= 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
+                }else{
+                    return;
                 }
             }
         },
         TraRig: function (steps) {
             while(steps>0){
-                if (initCol < 9) {
+                if (initCol < 9&&this.getElem(initRow, initCol+1).style.backgroundColor!=="darkgrey") {
+                    console.log(this.getElem(initRow, initCol).style.backgroundColor);
                     initCol += 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
+                }else{
+                    return;
                 }
             }
         },
         TraTop: function (steps) {
             while(steps>0){
-                if (initRow > 0) {
+                if (initRow > 0&&this.getElem(initRow-1, initCol).style.backgroundColor!=="darkgrey") {
+                    console.log(this.getElem(initRow, initCol).style.backgroundColor);
+
                     initRow -= 1;
                     showChess(initRow, initCol, initDir);
                     steps--;
+                }else{
+                    return;
                 }
             }
         },
         TraBot: function (steps) {
             while(steps>0){
-                if (initRow < 9) {
+                if (initRow < 9&&this.getElem(initRow+1, initCol).style.backgroundColor!=="darkgrey") {
+                    console.log(this.getElem(initRow, initCol).style.backgroundColor);
+
                     initRow += 1;
                     showChess(initRow, initCol, initDir);
                     steps--
+                }else{
+                    return;
                 }
             }
         },
@@ -262,6 +234,7 @@
         var colorWall=commands.slice(4);
         switch (commands.slice(0,7)) {
             case "mov lef":
+                console.log()
                 control.MovLef(step);
                 break;
             case "mov rig":
