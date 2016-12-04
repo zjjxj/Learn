@@ -229,6 +229,25 @@
         moveTo:function (x,y) {
             var difX=x-initRow;
             var difY=y-initCol;
+            console.log(x,y);
+            console.log(initRow,initCol);
+
+                if(difX>0){
+                    this.MovRig(difX);
+                    if(difY>0){
+                        this.MovBot(difY);
+                    }else {
+                        this.MovTop(Math.abs(difY));
+                    }
+
+                }else {
+                    this.MovLef(Math.abs(difX));
+                    if(difY>0){
+                        this.MovBot(difY);
+                    }else {
+                        this.MovTop(Math.abs(difY));
+                    }
+                }
 
         }
     };
@@ -266,8 +285,8 @@
                 control.buildWall();
                 break;
             case "mov to ":
-                var site=steps.split(",");
-                control.moveTo(parseInt(site[0]),parseInt(site[1]));
+                var site=step.split(",");
+                control.moveTo(parseInt(site[0]-1),parseInt(site[1])-1);
         }
         if(commands.slice(0,3)==="bru"){
             control.changeColor(colorWall);
@@ -299,26 +318,19 @@
 
     };
 
-
     var inputValue=[];  //保存输入的指令
-    var remindRow=2;    //同步行数
     var controlArr=["mov lef","mov top","mov bot","mov rig","tra top"
         ,"tra bot","tra rig","tra lef","build","bru","mov to "];//合法指令数组
 
-
-    function verify(value){
-        inputValue=value.replace(/\n/g,",").split(",");
-        inputValue=inputValue.slice(0,inputValue.length-1);
+    function verify(){
         if(inputValue.length>0){
             inputValue.map(function (data,index) {
                 var steps=data.slice(7,data.length);
-                var controls=data.slice(0,7);
-                var wallColor=data.slice(0,3);
                 var spanElem=$("#wrap").children[index];
-                if((steps&&steps<1)||(steps&&steps>9)||controlArr.indexOf(controls)===-1){
+                if((steps&&steps<1)||(steps&&steps>9)||controlArr.indexOf(data.slice(0,7))===-1){
                     spanElem.style.backgroundColor="red";
                     spanElem.style.borderRadius="12px";
-                    if(!(controlArr.indexOf(wallColor)===-1)){
+                    if(!(controlArr.indexOf(data.slice(0,3))===-1)){
                         spanElem.style.backgroundColor="";
                         spanElem.style.borderRadius="";
                     }
@@ -328,16 +340,39 @@
                 }
             })
         }
-    };
+    }
 
+    function upDateInputValue(){
+        inputValue=$("textarea").value.replace(/\n/g,"|").split("|");
+        inputValue=inputValue.slice(0,inputValue.length-1);
+
+    }
+    function upDateRemindRows() {
+        var initSpan=document.createElement("span");
+        initSpan.innerHTML=1;
+        $("#wrap").appendChild(initSpan);
+        inputValue.map(function (data,index) {
+            var newSpan=document.createElement("span");
+            newSpan.innerHTML=index+2;
+            $("#wrap").appendChild(newSpan);
+        })
+    }
     //按回车键进行输入验证
     document.onkeyup=function (e) {
         if(e.keyCode===13){
-            var newSpan=document.createElement("span");
-            newSpan.innerHTML=remindRow;
-            $("#wrap").appendChild(newSpan);
-            verify($("textarea").value);
-            remindRow++;
+            $("#wrap").innerHTML="";
+            upDateInputValue();
+            upDateRemindRows();
+            verify();
+        }else if(e.keyCode==8){
+            $("#wrap").innerHTML="";
+            inputValue=$("textarea").value.replace(/\n/g,"|").split("|");
+            inputValue.map(function (data,index) {
+                var newSpan=document.createElement("span");
+                newSpan.innerHTML=index+1;
+                $("#wrap").appendChild(newSpan);
+            });
+            verify();
         }else if(e.keyCode===37){
             control.MovLef(1);
         }else if(e.keyCode===38){
