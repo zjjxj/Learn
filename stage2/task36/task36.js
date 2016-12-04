@@ -49,22 +49,29 @@
                 elem.style.top = rows*51+"px";
                 elem.style.left = cols*52+"px";
                 elem.style.transform="rotate(270deg)";
-                initDeg=270
+                initDeg=270;
                 break;
         }
     };
 
     //根据行列数和颜色建墙
     function buildingWall(row,col,color) {
-        var elem = $("#map").getElementsByClassName("grad")[row].getElementsByTagName("span")[col];
-        elem.style.backgroundColor = color;
+        if(row<10&&row>=0&&col<10&&col>=0){
+            var elem = $("#map").getElementsByClassName("grad")[row].getElementsByTagName("span")[col];
+            elem.style.backgroundColor = color;
+        }
+
     }
 
     //控制器
     var initDeg=0 ; //旋转角度
     var control = {
         getElem: function (row,col) {
-            return $("#map").getElementsByClassName("grad")[row].getElementsByTagName("span")[col];
+            if(row<10&&row>=0&&col<10&&col>=0){
+                return $("#map").getElementsByClassName("grad")[row].getElementsByTagName("span")[col];
+
+            }
+            return false;
         },
         clearElem: function () {
             var elem = this.getElem(initRow,initCol);
@@ -227,31 +234,47 @@
             }
         },
         moveTo:function (x,y) {
-            var difX=x-initRow;
-            var difY=y-initCol;
-            console.log(x,y);
-            console.log(initRow,initCol);
-
-                if(difX>0){
-                    this.MovRig(difX);
-                    if(difY>0){
-                        this.MovBot(difY);
-                    }else {
-                        this.MovTop(Math.abs(difY));
-                    }
-
-                }else {
-                    this.MovLef(Math.abs(difX));
-                    if(difY>0){
-                        this.MovBot(difY);
-                    }else {
-                        this.MovTop(Math.abs(difY));
-                    }
-                }
-
+            // console.log(initRow,initCol)
+            traverseMap(x,y);
+            console.log(movCommand);
         }
+
     };
 
+    var movCommand=[[initRow,initCol]];
+
+    function verifySite(a,b) {
+        if( control.getElem(a,b)
+            &&control.getElem(a,b).style.backgroundColor!=="darkgrey"
+            &&movCommand.indexOf([a,b])==-1){
+            return true;
+        }
+        return false;
+    }
+
+    var x1=initRow;
+    var y1=initCol;
+    function traverseMap(x,y) {    //参数为目标坐标，零开始
+        if(control.getElem(x,y)!==control.getElem(x1,y1)){
+            if(verifySite(x1-1,y1)){
+                x1--;
+                movCommand.push([x1,y1]);
+                traverseMap(x,y);
+            }else if(verifySite(x1,y1+1)){
+                y1++;
+                movCommand.push([x1,y1]);
+                traverseMap(x,y);
+            }else if(verifySite(x1+1,y1)){
+                x1++;
+                movCommand.push([x1,y1]);
+                traverseMap(x,y);
+            }else if(verifySite(x1,y1-1)){
+                y1--;
+                movCommand.push([x1,y1]);
+                traverseMap(x,y);
+            }
+        }
+    }
     //执行指令
    var doCommand= function(commands) {
         var step=commands.slice(7,commands.length);
@@ -298,7 +321,7 @@
         setTimeout(function () {
             doCommand(inputValue.shift());
             if(inputValue.length>0){
-                setTimeout(arguments.callee,1200);
+                setTimeout(arguments.callee,1100);
             }
         },100);
         return false;
